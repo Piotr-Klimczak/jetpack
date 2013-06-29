@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<features name='jetpack-${project.version}'>
+
+    <feature name='jetpack-core' version='${project.version}' resolver='(obr)'>
+        <bundle>mvn:com.typesafe/config/${akka.config.version}</bundle>
+        <bundle>mvn:com.typesafe.akka/akka-osgi_${akka.actor.scala.version}/${akka.actor.version}</bundle>
+        <bundle>mvn:pl.reintegrate.jetpack/jetpack-core-api/${project.version}</bundle>
+        <bundle>mvn:pl.reintegrate.jetpack/jetpack-core-impl/${project.version}</bundle>
+    </feature>
+
+
+</features>

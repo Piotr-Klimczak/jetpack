@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>pl.reintegrate.jetpack</groupId>
+        <artifactId>jetpack-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../jetpack-parent/pom.xml</relativePath>
+    </parent>
+    <packaging>bundle</packaging>
+    <groupId>pl.reintegrate.jetpack</groupId>
+    <artifactId>jetpack-core-api</artifactId>
+    <name>${jetpackProjectName} :: Api</name>
+
+    <url>http://jetpack.reintegrate.pl/</url>
+    <organization>
+        <name>Reintegrate Piotr Klimczak</name>
+        <url>http://reintegrate.pl/</url>
+    </organization>
+    <inceptionYear>2013</inceptionYear>
+    <developers>
+        <developer>
+            <roles>
+                <role>Author</role>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+            <name>Piotr Klimczak</name>
+            <organization>Reintegrate Piotr Klimczak</organization>
+            <email>nannou9@gmail.com</email>
+        </developer>
+    </developers>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-osgi_${akka.actor.scala.version}</artifactId>
+            <version>${akka.actor.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Export-Package>
+                            {local-packages};version="${project.version}",
+                        </Export-Package>
+                        <Private-Package>
+                        </Private-Package>
+                        <Import-Package>
+                            org.osgi.framework.wiring,
+                            org.osgi.framework,
+
+                            scala,
+                            scala.runtime,
+                            scala.util,
+                            scala.reflect,
+                            scala.concurrent,
+                            scala.collection,
+                            scala.collection.convert,
+                            scala.collection.mutable,
+                            scala.collection.immutable,
+                            akka.actor,
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

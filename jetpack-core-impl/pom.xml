@@ -1,0 +1,97 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>pl.reintegrate.jetpack</groupId>
+        <artifactId>jetpack-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../jetpack-parent/pom.xml</relativePath>
+    </parent>
+    <packaging>bundle</packaging>
+    <groupId>pl.reintegrate.jetpack</groupId>
+    <artifactId>jetpack-core-impl</artifactId>
+    <name>${jetpackProjectName} :: Impl</name>
+
+    <url>http://jetpack.reintegrate.pl/</url>
+    <organization>
+        <name>Reintegrate Piotr Klimczak</name>
+        <url>http://reintegrate.pl/</url>
+    </organization>
+    <inceptionYear>2013</inceptionYear>
+    <developers>
+        <developer>
+            <roles>
+                <role>Author</role>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+            <name>Piotr Klimczak</name>
+            <organization>Reintegrate Piotr Klimczak</organization>
+            <email>nannou9@gmail.com</email>
+        </developer>
+    </developers>
+
+    <dependencies>
+        <dependency>
+            <groupId>pl.reintegrate.jetpack</groupId>
+            <artifactId>jetpack-core-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-asm</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Export-Package>
+                        </Export-Package>
+                        <Private-Package>
+                            {local-packages};version="${project.version}",
+                        </Private-Package>
+                        <Import-Package>
+                            pl.reintegrate.jetpack.core.osgi;version="${project.version}",
+                            pl.reintegrate.jetpack.core.osgi.exception;version="${project.version}",
+                            pl.reintegrate.jetpack.core.context;version="${project.version}",
+                            pl.reintegrate.jetpack.core.tooling;version="${project.version}",
+
+                            org.osgi.framework,
+                            org.osgi.service.blueprint,
+                            org.osgi.framework.wiring,
+
+                            org.slf4j, scala,
+
+                            scala.collection.immutable,
+                            scala.collection.mutable,
+                            scala.reflect,
+                            scala.util,
+                            scala.runtime,
+                            scala.collection,
+                            scala.collection.generic,
+                            scala.collection.convert,
+                            scala.concurrent,
+                            akka.actor, 
+                            akka.osgi,
+                            org.springframework.core.type,
+                            org.springframework.core.type.classreading,
+
+                        </Import-Package>
+                        <Bundle-Activator>pl.reintegrate.jetpack.core.impl.osgi.ActivationRegistryImpl</Bundle-Activator>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

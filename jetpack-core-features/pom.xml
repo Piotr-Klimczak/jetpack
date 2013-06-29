@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>pl.reintegrate.jetpack</groupId>
+        <artifactId>jetpack-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../jetpack-parent/pom.xml</relativePath>
+    </parent>
+    <groupId>pl.reintegrate.jetpack</groupId>
+    <artifactId>jetpack-core</artifactId>
+    <packaging>pom</packaging>
+    <name>${jetpackProjectName} :: Platforms :: Apache Karaf :: Features</name>
+
+    <url>http://jetpack.reintegrate.pl/</url>
+    <organization>
+        <name>Reintegrate Piotr Klimczak</name>
+        <url>http://reintegrate.pl/</url>
+    </organization>
+    <inceptionYear>2013</inceptionYear>
+    <developers>
+        <developer>
+            <roles>
+                <role>Author</role>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+            <name>Piotr Klimczak</name>
+            <organization>Reintegrate Piotr Klimczak</organization>
+            <email>nannou9@gmail.com</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <features.file>features.xml</features.file>
+    </properties>
+
+    <dependencies>
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filter</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>target/classes/features.xml</file>
+                                    <type>xml</type>
+                                    <classifier>features</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>pl.reintegrate.jetpack</groupId>
+        <artifactId>jetpack-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../jetpack-parent/pom.xml</relativePath>
+    </parent>
+    <groupId>pl.reintegrate.jetpack</groupId>
+    <artifactId>jetpack-core-itest</artifactId>
+    <name>${jetpackProjectName} :: iTest</name>
+
+    <url>http://jetpack.reintegrate.pl/</url>
+    <organization>
+        <name>Reintegrate Piotr Klimczak</name>
+        <url>http://reintegrate.pl/</url>
+    </organization>
+    <inceptionYear>2013</inceptionYear>
+    <developers>
+        <developer>
+            <roles>
+                <role>Author</role>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+            <name>Piotr Klimczak</name>
+            <organization>Reintegrate Piotr Klimczak</organization>
+            <email>nannou9@gmail.com</email>
+        </developer>
+    </developers>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.servicemix.itests</groupId>
+            <artifactId>itests</artifactId>
+            <version>${servicemix.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.reintegrate.jetpack</groupId>
+            <artifactId>jetpack-core</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>pl.reintegrate.jetpack</groupId>
+            <artifactId>jetpack-core-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>pl.reintegrate.jetpack</groupId>
+            <artifactId>jetpack-core-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <!-- Dependencies with exclusions -->
+        <dependency>
+            <groupId>org.apache.servicemix</groupId>
+            <artifactId>apache-servicemix-minimal</artifactId>
+            <version>${servicemix.version}</version>
+            <type>zip</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.karaf</groupId>
+                    <artifactId>apache-karaf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.servicemix</groupId>
+                    <artifactId>org.apache.servicemix.branding</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix</groupId>
+            <artifactId>apache-servicemix-full</artifactId>
+            <version>${servicemix.version}</version>
+            <type>zip</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.karaf</groupId>
+                    <artifactId>apache-karaf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.servicemix</groupId>
+                    <artifactId>org.apache.servicemix.branding</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix</groupId>
+            <artifactId>apache-servicemix</artifactId>
+            <version>${servicemix.version}</version>
+            <type>tar.gz</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.servicemix</groupId>
+                    <artifactId>org.apache.servicemix.branding</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core-osgi</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
