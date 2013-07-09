@@ -58,6 +58,8 @@
                         <Private-Package>
                         </Private-Package>
                         <Import-Package>
+                            org.slf4j,
+
                             org.osgi.framework.wiring,
                             org.osgi.framework,
 

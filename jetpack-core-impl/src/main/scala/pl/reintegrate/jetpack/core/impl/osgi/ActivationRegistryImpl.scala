@@ -36,7 +36,7 @@ class ActivationRegistryImpl extends ActorSystemActivator with ActivationRegistr
     }
 
     override def start(bundleContext: BundleContext): Unit = {
-        LOG.info("Starting Jetpack Activator")
+        LOG.info("Starting Jetpack Activator...")
 
         super.start(bundleContext)
         implicit val actorSystemContext = actorSystem.dispatcher
@@ -69,8 +69,12 @@ class ActivationRegistryImpl extends ActorSystemActivator with ActivationRegistr
             getFutureJetpackContext(bundleContext)
         } onComplete {
             case Success(jetpackContext) => finalizeActivationRegistry(jetpackContext, bundleContext)
-            case Failure(e) => throw e
+            case Failure(e) =>
+                LOG.error("Exception occured while getting Jetpack context from OSGi registry", e)
+                throw e
         }
+
+        LOG.info("Jetpack Activator initialized, waiting for future tasks...")
     }
 
     override def stop(context: BundleContext): Unit = {
@@ -96,6 +100,7 @@ class ActivationRegistryImpl extends ActorSystemActivator with ActivationRegistr
     }
 
     override def addBundleProcessor(id: Long, bp: BundleProcessor) = {
+        LOG.info("Adding bundle processor: " + bp.getClass().getCanonicalName() + " to Activation Registry")
         bp.setContext(context);
         bundleProcessors.put(id, bp)
     }

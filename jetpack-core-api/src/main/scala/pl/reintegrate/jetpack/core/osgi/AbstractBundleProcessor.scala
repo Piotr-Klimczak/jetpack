@@ -13,7 +13,7 @@ import pl.reintegrate.jetpack.core.osgi.exception.BundleProcessingException
 import java.net.URL
 import org.osgi.framework.BundleContext
 import pl.reintegrate.jetpack.core.context.JetpackContext
-import pl.reintegrate.jetpack.core.context.JetpackContext
+import pl.reintegrate.jetpack.core.tooling.OsgiInstantiation
 
 abstract class AbstractBundleProcessor extends BundleProcessor {
     var context: JetpackContext = null
@@ -21,6 +21,7 @@ abstract class AbstractBundleProcessor extends BundleProcessor {
     lazy val activationRegistry: ActivationRegistry = context.getActivationRegistry
 
     override def setContext(context: JetpackContext) = this.context = context
+    override def getContext = context
 
     def listResources(bundle: Bundle, filter: String = "*.*") = {
         val bw = bundle.adapt(classOf[BundleWiring])

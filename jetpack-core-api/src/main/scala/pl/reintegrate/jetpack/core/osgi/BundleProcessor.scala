@@ -4,6 +4,7 @@ import org.osgi.framework.Bundle
 import org.osgi.framework.BundleEvent
 import org.osgi.framework.BundleContext
 import pl.reintegrate.jetpack.core.context.JetpackContext
+import pl.reintegrate.jetpack.core.context.JetpackContext
 
 trait BundleProcessor {
 
@@ -12,4 +13,5 @@ trait BundleProcessor {
     def bundleChanged(bundleEvent: BundleEvent)
 
     def setContext(context: JetpackContext)
+    def getContext: JetpackContext
 }

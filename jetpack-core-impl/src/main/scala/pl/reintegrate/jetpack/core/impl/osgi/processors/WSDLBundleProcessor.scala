@@ -6,7 +6,7 @@ import pl.reintegrate.jetpack.core.osgi.AnnotatedBundleProcessor
 import pl.reintegrate.jetpack.core.osgi.AbstractBundleProcessor
 
 @AnnotatedBundleProcessor
-class WSDLProcessor extends AbstractBundleProcessor {
+class WSDLBundleProcessor extends AbstractBundleProcessor {
 
     override def scan(bundle: Bundle) = {}
     override def stopScan(bundle: Bundle) = {}

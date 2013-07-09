@@ -31,16 +31,10 @@ import pl.reintegrate.jetpack.core.osgi.BundleProcessor
 import scala.concurrent.Future
 import pl.reintegrate.jetpack.core.tooling.AwaitableOperation
 import scala.util.Failure
+import pl.reintegrate.jetpack.core.tooling.OsgiInstantiation
 
-class BundleProcessorsDiscovery extends AbstractBundleProcessor {
+class BundleProcessorsDiscovery extends AbstractBundleProcessor with OsgiInstantiation {
     import BundleProcessorsDiscovery.LOG
-    lazy implicit val actorContext = context.getActorSystemDispatcher
-
-    lazy val serviceAwaitable = AwaitableOperation {
-        byReference: ByServiceReference =>
-            def getServiceReference = bundleContext.getServiceReferences(byReference.interfaceName(), byReference.filter()).toList.get(0)
-            bundleContext.getService(getServiceReference).asInstanceOf[BundleProcessor]
-    }
 
     override def scan(bundle: Bundle) = {
         LOG.info("Bundle " + bundle.getBundleId + " scanning...")
@@ -65,16 +59,17 @@ class BundleProcessorsDiscovery extends AbstractBundleProcessor {
         val className = getClassNameFromUrl(url)
 
         def isBundleProcessor(className: String) = {
-            def hasBundleProcessorSuperClass(reader: MetadataReader) = !reader.getClassMetadata.getInterfaceNames.find(_.equals(classOf[BundleProcessor].getCanonicalName)).isEmpty
+            def isBundleProcessorImplementation(reader: MetadataReader) = !reader.getClassMetadata.getInterfaceNames.find(_.equals(classOf[BundleProcessor].getCanonicalName)).isEmpty
             def hasBundleProcessorAnnotation(reader: MetadataReader) = !reader.getAnnotationMetadata.getAnnotationTypes.find(_.equals(classOf[AnnotatedBundleProcessor].getCanonicalName)).isEmpty
+            def isAbstract(reader: MetadataReader) = reader.getAnnotationMetadata.isAbstract
 
             Try(metadataReader.getMetadataReader(className)) match {
-                case Success(reader) => (hasBundleProcessorSuperClass(reader) || hasBundleProcessorAnnotation(reader))
+                case Success(reader) => (isBundleProcessorImplementation(reader) || hasBundleProcessorAnnotation(reader)) && !isAbstract(reader)
                 case Failure(e) => LOG.error("Cannot read class under url: " + url, e); false
             }
         }
 
-        def isAlreadyRegistered(className: String) =
+        def isAlreadyRegistered(className: String) = {
             context.getActivationRegistry.getBundleProcessors.find(bp => className.equals(bp.getClass.getCanonicalName)) match {
                 case Some(_) =>
                     LOG.info("Bundle processor already registered: " + url)
@@ -82,38 +77,20 @@ class BundleProcessorsDiscovery extends AbstractBundleProcessor {
                 case None =>
                     false
             }
-
-        def getBundleProcessorInstance(clazz: Class[_]): BundleProcessor = {
-            def hasByServiceReferenceAnnotation(clazz: Class[_]) = Try(clazz.getAnnotation(classOf[AnnotatedBundleProcessor]).ref()(0)) match {
-                case Success(byReference) => Some(byReference)
-                case Failure(e) =>
-                    LOG.info("Bundle processor of class: " + clazz.getCanonicalName + " will be instantieted using reflection")
-                    None
-            }
-            def instantiateBundleProcessor(clazz: Class[_]) = Try(clazz.newInstance.asInstanceOf[BundleProcessor]) match {
-                case Success(instance) => instance
-                case Failure(e) => throw new BundleProcessingException("Could not instantiate bundle's class: " + url, e)
-            }
-
-            hasByServiceReferenceAnnotation(clazz) match {
-                case Some(byReference) => serviceAwaitable.startWith(byReference)
-                case None => instantiateBundleProcessor(clazz)
-            }
         }
 
         if (isBundleProcessor(className) && !isAlreadyRegistered(className)) {
             LOG.info("Found new bundle processor: " + url)
+            Future {
+                def getByServiceReferenceAnnotation(clazz: Class[_]) = clazz.getAnnotation(classOf[AnnotatedBundleProcessor]).ref()(0)
 
-            Try(bundle.loadClass(className).asInstanceOf[Class[Any]]) match {
-                case Success(clazz) => {
-                    Future {
-                        getBundleProcessorInstance(clazz)
-                    } onComplete {
-                        case Success(instance) => context.getActivationRegistry.addBundleProcessor(bundle.getBundleId, instance)
-                        case Failure(e) => throw new BundleProcessingException("Could not get bundle processor instance: " + url, e)
-                    }
-                }
-                case Failure(e) => throw new BundleProcessingException("Could not load bundle's class: " + url, e)
+                lookupOSGiOrCreateInstanceOf(
+                    loadClassFromBundle[BundleProcessor](bundle, className),
+                    getByServiceReferenceAnnotation(_))
+            } onComplete {
+                case Success(instance) => context.getActivationRegistry.addBundleProcessor(bundle.getBundleId, instance)
+                case Failure(e) if (e.isInstanceOf[ClassNotFoundException]) => throw new BundleProcessingException("Could not load bundle's class: " + url, e)
+                case Failure(e) => throw new BundleProcessingException("Could not get bundle processor instance: " + url, e)
             }
 
         }

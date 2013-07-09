@@ -48,6 +48,6 @@ class JetpackInstallTest extends BasicIntegrationTest {
 
     object JetpackInstallTest {
         val BUNDLE_PROCESSOR_DISCOVERY_CLASS_NAME = "BundleProcessorsDiscovery"
-        val BUNDLE_PROCESSOR_WSDL_CLASS_NAME = "WSDLProcessor"
+        val BUNDLE_PROCESSOR_WSDL_CLASS_NAME = "WSDLBundleProcessor"
     }
 }
