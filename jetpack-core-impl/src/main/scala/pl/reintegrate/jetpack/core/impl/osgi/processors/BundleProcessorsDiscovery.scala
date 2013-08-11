@@ -83,11 +83,11 @@ class BundleProcessorsDiscovery extends AbstractBundleProcessor with OsgiInstant
             LOG.info("Found new bundle processor: " + url)
             Future {
                 val clazz = loadClassFromBundle[BundleProcessor](bundle, className);
-                
+
                 getByServiceReference(clazz) {
-                        _.getAnnotation(classOf[AnnotatedBundleProcessor]).ref()(0)
+                    _.getAnnotation(classOf[AnnotatedBundleProcessor]).ref()(0)
                 } match {
-                    case Some(instance) => instance 
+                    case Some(instance) => instance
                     case None => instantiate(clazz)
                 }
             } onComplete {
