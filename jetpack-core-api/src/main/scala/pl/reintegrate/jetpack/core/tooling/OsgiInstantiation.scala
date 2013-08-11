@@ -21,28 +21,23 @@ trait OsgiInstantiation {
     }
 
     def getContext: JetpackContext
-    
+
     def loadClassFromBundle[T](bundle: Bundle, className: String) = bundle.loadClass(className).asInstanceOf[Class[T]]
 
-    def lookupOSGiOrCreateInstanceOf[T](clazz: Class[T], getServiceByReferenceAnnotation: Class[_] => ByServiceReference): T = {
-        def hasByServiceReferenceAnnotation(clazz: Class[T]) = Try(getServiceByReferenceAnnotation(clazz)) match {
+    def instantiate[T](clazz: Class[T]): T = Try(clazz.newInstance) match {
+        case Success(instance) => instance
+        case Failure(e) => throw new InstatiationException("Could not instantiate class: " + clazz.getCanonicalName(), e)
+    }
+
+    def getByServiceReference[T](clazz: Class[T])(getByServiceReferenceAnnotation: Class[_] => ByServiceReference): Option[T] =
+        Try(getByServiceReferenceAnnotation(clazz)) match {
             case Success(byReference) =>
                 LOG.info("Class " + clazz.getCanonicalName() + " will be instantieted using OSGi reference")
-                Some(byReference)
+                Some(bundleProcessorServiceAwaitable.startWith(byReference).asInstanceOf[T])
             case Failure(e) =>
                 LOG.info("Class " + clazz.getCanonicalName() + " will be instantieted using reflection")
                 None
         }
-        def instantiate(clazz: Class[T]): T = Try(clazz.newInstance) match {
-            case Success(instance) => instance
-            case Failure(e) => throw new InstatiationException("Could not instantiate class: " + clazz.getCanonicalName(), e)
-        }
-
-        hasByServiceReferenceAnnotation(clazz) match {
-            case Some(byReference) => bundleProcessorServiceAwaitable.startWith(byReference).asInstanceOf[T]
-            case None => instantiate(clazz)
-        }
-    }
 }
 
 class InstatiationException(msg: String, e: Throwable) extends RuntimeException(msg, e) {

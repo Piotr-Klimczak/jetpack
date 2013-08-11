@@ -82,11 +82,14 @@ class BundleProcessorsDiscovery extends AbstractBundleProcessor with OsgiInstant
         if (isBundleProcessor(className) && !isAlreadyRegistered(className)) {
             LOG.info("Found new bundle processor: " + url)
             Future {
-                def getByServiceReferenceAnnotation(clazz: Class[_]) = clazz.getAnnotation(classOf[AnnotatedBundleProcessor]).ref()(0)
-
-                lookupOSGiOrCreateInstanceOf(
-                    loadClassFromBundle[BundleProcessor](bundle, className),
-                    getByServiceReferenceAnnotation(_))
+                val clazz = loadClassFromBundle[BundleProcessor](bundle, className);
+                
+                getByServiceReference(clazz) {
+                        _.getAnnotation(classOf[AnnotatedBundleProcessor]).ref()(0)
+                } match {
+                    case Some(instance) => instance 
+                    case None => instantiate(clazz)
+                }
             } onComplete {
                 case Success(instance) => context.getActivationRegistry.addBundleProcessor(bundle.getBundleId, instance)
                 case Failure(e) if (e.isInstanceOf[ClassNotFoundException]) => throw new BundleProcessingException("Could not load bundle's class: " + url, e)
