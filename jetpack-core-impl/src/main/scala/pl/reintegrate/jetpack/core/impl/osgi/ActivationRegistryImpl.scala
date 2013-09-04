@@ -10,13 +10,11 @@ import org.osgi.framework.ServiceEvent
 import org.slf4j.LoggerFactory
 import pl.reintegrate.jetpack.core.impl.osgi.processors.BundleProcessorsDiscovery
 import scala.collection.mutable.ListBuffer
-import java.util.Dictionary
 import pl.reintegrate.jetpack.core.osgi.ActivationRegistry
 import org.osgi.framework.BundleActivator
 import scala.util.Failure
 import scala.util.Try
 import scala.util.Success
-import org.osgi.framework.ServiceReference
 import pl.reintegrate.jetpack.core.context.JetpackContext
 import pl.reintegrate.jetpack.core.tooling.AwaitableOperation
 import scala.concurrent.Future
@@ -45,7 +43,7 @@ class ActivationRegistryImpl extends ActorSystemActivator with ActivationRegistr
             def getServiceReference = Option(AwaitableOperation(context.getServiceReference[JetpackContext]).startWith(classOf[JetpackContext]))
             getServiceReference match {
                 case Some(reference) => AwaitableOperation(context.getService[JetpackContext]).startWith(reference)
-                case None => throw new IllegalStateException("Could not find Jetpack context in OSGi registry: " + classOf[JetpackContext].getName())
+                case None => throw new IllegalStateException("Could not find Jetpack context in OSGi registry: " + classOf[JetpackContext].getName)
             }
         }
 
@@ -61,7 +59,7 @@ class ActivationRegistryImpl extends ActorSystemActivator with ActivationRegistr
             addBundleProcessor(0, new BundleProcessorsDiscovery())
             processInstalledBundles(bundleContext, scanBundle)
 
-            bundleContext.registerService(classOf[ActivationRegistry].getCanonicalName(), this, null)
+            bundleContext.registerService(classOf[ActivationRegistry].getCanonicalName, this, null)
         }
 
 
@@ -100,8 +98,8 @@ class ActivationRegistryImpl extends ActorSystemActivator with ActivationRegistr
     }
 
     override def addBundleProcessor(id: Long, bp: BundleProcessor) = {
-        LOG.info("Adding bundle processor: " + bp.getClass().getCanonicalName() + " to Activation Registry")
-        bp.setContext(context);
+        LOG.info("Adding bundle processor: " + bp.getClass.getCanonicalName + " to Activation Registry")
+        bp.setContext(context)
         bundleProcessors.put(id, bp)
     }
     override def getBundleProcessors(): ListBuffer[BundleProcessor] = bundleProcessors.toList

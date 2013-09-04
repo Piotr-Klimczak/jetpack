@@ -1,6 +1,5 @@
 package pl.reintegrate.jetpack.core.impl.osgi
 
-import scala.collection.immutable.Nil
 import org.osgi.framework.Bundle
 import scala.collection.mutable.Map
 import scala.collection.mutable.ListBuffer
@@ -13,7 +12,7 @@ class BundleByIdContainerOf[T] {
     def put(bundle: Bundle, value: T) = getForBundle(bundle) += value
     def put(bundleId: Long, value: T) = getForBundle(bundleId) += value
 
-    def getForBundle(bundle: Bundle): ListBuffer[T] = getForBundle(bundle.getBundleId())
+    def getForBundle(bundle: Bundle): ListBuffer[T] = getForBundle(bundle.getBundleId)
     def getForBundle(bundleId: Long): ListBuffer[T] = map.get(bundleId) match {
         case Some(v) => v
         case None => {
@@ -22,6 +21,6 @@ class BundleByIdContainerOf[T] {
         }
     }
 
-    def toList() = map.foldLeft(ListBuffer[T]()) { case (s, (k, v)) => s ++ v }
+    def toList = map.foldLeft(ListBuffer[T]()) { case (s, (k, v)) => s ++ v }
     
 }
